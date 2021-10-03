@@ -1,0 +1,18 @@
+name: KOTH
+description: "A King of the hill (KOTH) minigame"
+author: ItsMax123
+
+main: Max\koth\Main
+version: 1.0.0
+api: 3.0.0
+
+commands:
+  koth:
+    description: Base command for all koth related commands.
+    usage: "/koth"
+    permission: koth.command
+
+permissions:
+  koth.command:
+    description: Lets user use all koth commands.
+    default: op
