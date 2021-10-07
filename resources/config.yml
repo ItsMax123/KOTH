@@ -10,10 +10,10 @@ reward_commands:
   - "give {PLAYER} diamond 64"
   - "give {PLAYER} obsidian 64"
 
-#The command that will be broadcasted when a KOTH event starts:
+#The message that will be broadcasted when a KOTH event starts:
 koth_start_message: "§7[§bKOTH§7] §a§lKOTH event has started!"
 
-#The command that will be broadcasted when a KOTH event ends, {PLAYER} will be replaced with the name of the winner:
+#The messgae that will be broadcasted when a KOTH event ends, {PLAYER} will be replaced with the name of the winner:
 koth_end_message: "§7[§bKOTH§7] §a§lKOTH event has ended and {PLAYER} has won!"
 
 #The coordinates of the KOTH zone (can be edited in-game with '/koth setpos1' and '/koth setpos2')

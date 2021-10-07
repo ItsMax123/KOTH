@@ -24,7 +24,7 @@ class Main extends PluginBase {
         $this->saveResource("config.yml");
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
 
-        $this->getScheduler()->scheduleDelayedRepeatingTask(new StartKothTask($this), ($this->config->get("delay_between_koths")*72), ($this->config->get("delay_between_koths")*72000));
+        $this->getScheduler()->scheduleDelayedRepeatingTask(new StartKothTask($this), ($this->config->get("delay_between_koths")*72000), ($this->config->get("delay_between_koths")*72000));
     }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
@@ -88,7 +88,7 @@ class Main extends PluginBase {
         if (isset($this->taskid)) {
             $this->getLogger()->info("§cCould not start KOTH event because another one is already running.");
         } else {
-            $this->taskid = $this->getScheduler()->scheduleRepeatingTask(new KothTask($this), 20)->getTaskId();
+            $this->taskid = $this->getScheduler()->scheduleRepeatingTask(new KothTask($this), 10)->getTaskId();
             $this->getServer()->broadcastMessage($this->config->get("koth_start_message"));
         }
     }
