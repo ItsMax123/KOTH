@@ -9,8 +9,12 @@ use pocketmine\utils\{Config};
 use pocketmine\plugin\PluginBase;
 use pocketmine\command\{Command, CommandSender, ConsoleCommandSender};
 
+
 use Max\koth\Tasks\{StartKothTask, KothTask};
 use Max\koth\libs\BossBar;
+use CortexPE\DiscordWebhookAPI\Message;
+use CortexPE\DiscordWebhookAPI\Webhook;
+use CortexPE\DiscordWebhookAPI\Embed; // optional
 
 
 class Main extends PluginBase {
@@ -23,6 +27,7 @@ class Main extends PluginBase {
 
         $this->saveResource("config.yml");
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+        $this->configAll = $this->config->getAll();
 
         $this->getScheduler()->scheduleDelayedRepeatingTask(new StartKothTask($this), ($this->config->get("delay_between_koths")*72000), ($this->config->get("delay_between_koths")*72000));
     }
@@ -43,7 +48,7 @@ class Main extends PluginBase {
                     return true;
                 case "end":
                 case "stop":
-                    $this->stopkoth();
+					if (isset($this->taskid)) $this->stopkoth();
                     return true;
                 case "setpos1":
                 case "set pos 1":
@@ -91,6 +96,31 @@ class Main extends PluginBase {
             $this->taskid = $this->getScheduler()->scheduleRepeatingTask(new KothTask($this), 10)->getTaskId();
             $this->getServer()->broadcastMessage($this->config->get("koth_start_message"));
         }
+        if(isset($this->config->getAll()["start-webhook-url"])) {
+        	$webHook = new Webhook($this->config->get("start-webhook-url"));
+			$msg = new Message();
+			$embed = new Embed();
+
+			if(isset($this->configAll["start-webhook-username"])) $msg->setUsername($this->config->get("start-webhook-username"));
+			if(isset($this->configAll["start-webhook-avatar-url"])) $msg->setAvatarURL($this->config->get("start-webhook-avatar-url"));
+			if(isset($this->configAll["start-webhook-mention"])) $msg->setContent($this->config->get("start-webhook-mention")); //<@& Role_ID >
+
+			$embed->setColor(0x00FF00);
+			if(isset($this->configAll["start-webhook-title"])) $embed->setTitle($this->config->get("start-webhook-title"));
+			if(isset($this->configAll["start-webhook-description"])) $embed->setDescription($this->config->get("start-webhook-description"));
+
+			if(isset($this->configAll["start-webhook-fields"])) {
+				foreach($this->config->get("start-webhook-fields") as $name => $value) {
+					$embed->addField($name, $value);
+				}
+			}
+			if(isset($this->configAll["start-webhook-thumnail-url"])) $embed->setThumbnail($this->config->get("start-webhook-thumnail-url"));
+			if(isset($this->configAll["start-webhook-image-url"])) $embed->setImage($this->config->get("start-webhook-image-url"));
+			if(isset($this->configAll["start-webhook-footer-icon-url"])) $embed->setFooter($this->config->get("start-webhook-footer"), $this->config->get("start-webhook-footer-icon-url"));
+
+			$msg->addEmbed($embed);
+			$webHook->send($msg);
+		}
     }
 
     public function StopKoth(string $winner = null) {
@@ -106,5 +136,30 @@ class Main extends PluginBase {
         $this->getScheduler()->cancelAllTasks();
         $this->getServer()->broadcastMessage(str_replace("{PLAYER}", $winner, $this->config->get("koth_end_message")));
         $this->bar->removeAllPlayers();
+		if(isset($this->config->getAll()["end-webhook-url"])) {
+			$webHook = new Webhook($this->config->get("end-webhook-url"));
+			$msg = new Message();
+			$embed = new Embed();
+
+			if(isset($this->configAll["end-webhook-username"])) $msg->setUsername($this->config->get("end-webhook-username"));
+			if(isset($this->configAll["end-webhook-avatar-url"])) $msg->setAvatarURL($this->config->get("end-webhook-avatar-url"));
+			if(isset($this->configAll["end-webhook-mention"])) $msg->setContent($this->config->get("end-webhook-mention")); //<@& Role_ID >
+
+			$embed->setColor(0xFF0000);
+			if(isset($this->configAll["end-webhook-title"])) $embed->setTitle($this->config->get("end-webhook-title"));
+			if(isset($this->configAll["end-webhook-description"])) $embed->setDescription($this->config->get("end-webhook-description"));
+
+			if(isset($this->configAll["end-webhook-fields"])) {
+				foreach($this->config->get("end-webhook-fields") as $name => $value) {
+					$embed->addField($name, str_replace("{PLAYER}", $winner, $value));
+				}
+			}
+			if(isset($this->configAll["end-webhook-footer-icon-url"])) $embed->setFooter($this->config->get("end-webhook-footer"), $this->config->get("end-webhook-footer-icon-url"));
+			if(isset($this->configAll["end-webhook-thumnail-url"])) $embed->setThumbnail($this->config->get("end-webhook-thumnail-url"));
+			if(isset($this->configAll["end-webhook-image-url"])) $embed->setImage($this->config->get("end-webhook-image-url"));
+
+			$msg->addEmbed($embed);
+			$webHook->send($msg);
+		}
     }
 }

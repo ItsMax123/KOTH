@@ -19,4 +19,47 @@ koth_end_message: "§7[§bKOTH§7] §a§lKOTH event has ended and {PLAYER} has w
 #The coordinates of the KOTH zone (can be edited in-game with '/koth setpos1' and '/koth setpos2')
 position1: "0:0:0"
 position2: "0:256:0"
+
+#Webhooks are a way to automatically send discord messages when koth start/ends.
+#Change whatever you want here. To remove something, just leave it blanc.
+#Everything that is already in here is just here as an example.
+
+#Webhook when koth starts:
+start-webhook-url:
+start-webhook-username: KOTH-Announcer
+start-webhook-avatar-url: https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png
+#To mention a role, do <@&ROLE_ID>, to mention a person do <@USER_ID>
+start-webhook-mention: "@everyone"
+#Color must be in HEX format with no #
+start-webhook-color: "00FF00"
+start-webhook-title: KOTH
+start-webhook-description: A new KOTH event has **started**!
+#You can change 'Coordinates' and 'Rewards' to whatever you want. You can also remove them and add more fields.
+start-webhook-fields: 
+  Coordinates: "0, 0, 0"
+  Rewards: 64 diamonds, 64 obsidian
+start-webhook-thumnail-url: https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg
+start-webhook-image-url: https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg
+start-webhook-footer: King Of The Hill (KOTH)
+start-webhook-footer-icon-url: https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png
+
+
+#Webhook when koth ends:
+end-webhook-url:
+end-webhook-username: KOTH-Announcer
+end-webhook-avatar-url: https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png
+#To mention a role, do <@&ROLE_ID>, to mention a person do <@USER_ID>
+end-webhook-mention:
+#Color must be in HEX format with no #
+end-webhook-color: "FF0000"
+end-webhook-title: KOTH
+end-webhook-description: The KOTH event has **ended**!
+#You can change 'Coordinates' and 'Rewards' to whatever you want. You can also remove them and add more fields.
+end-webhook-fields: 
+  Winner: "{PLAYER}"
+  Rewards: 64 diamonds, 64 obsidian
+end-webhook-thumnail-url: https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg
+end-webhook-image-url: https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg
+end-webhook-footer: King Of The Hill (KOTH)
+end-webhook-footer-icon-url: https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png
 ...
