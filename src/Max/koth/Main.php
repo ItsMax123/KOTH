@@ -14,7 +14,7 @@ use Max\koth\Tasks\{StartKothTask, KothTask};
 use Max\koth\libs\BossBar;
 use CortexPE\DiscordWebhookAPI\Message;
 use CortexPE\DiscordWebhookAPI\Webhook;
-use CortexPE\DiscordWebhookAPI\Embed; // optional
+use CortexPE\DiscordWebhookAPI\Embed;
 
 
 class Main extends PluginBase {
@@ -22,20 +22,31 @@ class Main extends PluginBase {
 
     public function onEnable() {
 
-        new EventListener($this);
-        $this->bar = new BossBar();
-
         $this->saveResource("config.yml");
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+	$this->data = new Config($this->getDataFolder() . "data.yml", Config::YAML);
+	$this->dataAll = $this->config->getAll();
         $this->configAll = $this->config->getAll();
-
+	if (strtolower($this->config->get("info")) == "bossbar") $this->bar = new BossBar();
+	    
+	new EventListener($this);
+	    
+	if(!file_exists($this->getDataFolder())){
+            mkdir($this->getDataFolder());
+        }
+        if (!class_exists(Webhook::class)) {
+	    $this->getLogger()->error("DiscordWebhookAPI virion was not found. Make sure to keep your pocketmine updated and download the plugin from https://poggit.pmmp.io/p/StaffMode/ ");
+	    $this->getServer()->getPluginManager()->disablePlugin($this);
+	    return;
+	}
+	    
         $this->getScheduler()->scheduleDelayedRepeatingTask(new StartKothTask($this), ($this->config->get("delay_between_koths")*72000), ($this->config->get("delay_between_koths")*72000));
     }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
         if ($command->getName() == "koth") {
             if (!isset($args[0])) {
-                $sender->sendMessage("§7[§bKOTH§7] Available commands:\n/koth start\n/koth end\n");
+                $sender->sendMessage("§7[§bKOTH§7] Available commands:\n - /koth setpos1\n - /koth setpos2\n - /koth start\n - /koth end");
                 return true;
             }
             switch($args[0]){
@@ -60,8 +71,8 @@ class Main extends PluginBase {
                         return true;
                     }
                     $position = $sender->getPosition();
-                    $this->config->set("position1", $position->x.":".$position->y.":".$position->z);
-                    $this->config->save();
+                    $this->data->set("position1", $position->x.":".$position->y.":".$position->z);
+                    $this->data->save();
                     $sender->sendMessage("§7[§bKOTH§7] §aPosition 1 set. Do '/koth setpos2' to set the 2nd position (In the opposite corner of the KOTH area).");
                     return true;
                 case "setpos2":
@@ -74,12 +85,12 @@ class Main extends PluginBase {
                         return true;
                     }
                     $position = $sender->getPosition();
-                    $this->config->set("position2", $position->x.":".$position->y.":".$position->z);
-                    $this->config->save();
+                    $this->data->set("position2", $position->x.":".$position->y.":".$position->z);
+                    $this->data->save();
                     $sender->sendMessage("§7[§bKOTH§7] §aPosition 2 set. ");
                     return true;
                 default:
-                    $sender->sendMessage("§7[§bKOTH§7] Available commands:\n/koth start\n/koth end\n");
+                    $sender->sendMessage("§7[§bKOTH§7] Available commands:\n - /koth setpos1\n - /koth setpos2\n - /koth start\n - /koth end");
                     return true;
             }
         } else {
