@@ -5,8 +5,11 @@ delay_between_koths: 6
 #The time (IN SECONDS) to capture KOTH:
 capture_time: 300
 
-#The way the plugin will show the KOTH information (on/off):
+#Should the plugin display koth information on the bossbar(top of screen) (on/off):
 bossbar: on
+
+#Should the plugin display koth information on the hotbar(bottom of screen) (on/off):
+hotbar: off
 
 #The commands that will be executed when the KOTH event has ended, {PLAYER} will be replaced with the name of the winner:
 reward_commands:

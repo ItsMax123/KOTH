@@ -61,6 +61,11 @@ class KothTask extends Task {
 			$this->plugin->bar->setSubTitle("§m" . $minutes . ":" . $seconds . "  |  " . "King: " . $kingName);
 			$this->plugin->bar->setPercentage(round(($current_capture_time / $total_capture_time), 2) + 0.01);
 		}
+		if ($this->plugin->config->get("hotbar")) {
+			foreach (Server::getInstance()->getOnlinePlayers() as $player) {
+				$player->sendPopup("§mTime: ".$minutes.":".$seconds." | King: ".$kingName);
+			}
+		}
 		if (isset($this->plugin->scorehud)) {
 			(new ServerTagsUpdateEvent([
 				new ScoreTag("koth.king", $kingName),
