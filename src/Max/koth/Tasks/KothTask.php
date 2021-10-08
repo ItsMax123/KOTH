@@ -63,7 +63,7 @@ class KothTask extends Task {
 		}
 		if ($this->plugin->config->get("hotbar")) {
 			foreach (Server::getInstance()->getOnlinePlayers() as $player) {
-				$player->sendPopup("§mTime: ".$minutes.":".$seconds." | King: ".$kingName);
+				$player->sendTip("§mTime: ".$minutes.":".$seconds." | King: ".$kingName);
 			}
 		}
 		if (isset($this->plugin->scorehud)) {
