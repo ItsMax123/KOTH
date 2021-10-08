@@ -8,39 +8,37 @@ use pocketmine\Player;
 use pocketmine\utils\{Config};
 use pocketmine\plugin\PluginBase;
 use pocketmine\command\{Command, CommandSender, ConsoleCommandSender};
-
+use pocketmine\plugin\Plugin;
 
 use Max\koth\Tasks\{StartKothTask, KothTask};
 use Max\koth\libs\BossBar;
 use CortexPE\DiscordWebhookAPI\Message;
 use CortexPE\DiscordWebhookAPI\Webhook;
 use CortexPE\DiscordWebhookAPI\Embed;
+use Ifera\ScoreHud\event\TagsResolveEvent;
 
-
-class Main extends PluginBase {
+class Main extends PluginBase{
     public $taskid, $bar;
 
     public function onEnable() {
 
         $this->saveResource("config.yml");
+		$this->saveResource("data.yml");
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-	$this->data = new Config($this->getDataFolder() . "data.yml", Config::YAML);
-	$this->dataAll = $this->config->getAll();
+		$this->data = new Config($this->getDataFolder() . "data.yml", Config::YAML);
+		$this->dataAll = $this->config->getAll();
         $this->configAll = $this->config->getAll();
-	if (strtolower($this->config->get("info")) == "bossbar") $this->bar = new BossBar();
+		if ($this->config->get("bossbar")) $this->bar = new BossBar();
 	    
-	new EventListener($this);
-	    
-	if(!file_exists($this->getDataFolder())){
-            mkdir($this->getDataFolder());
-        }
-        if (!class_exists(Webhook::class)) {
-	    $this->getLogger()->error("DiscordWebhookAPI virion was not found. Make sure to keep your pocketmine updated and download the plugin from https://poggit.pmmp.io/p/StaffMode/ ");
-	    $this->getServer()->getPluginManager()->disablePlugin($this);
-	    return;
-	}
-	    
-        $this->getScheduler()->scheduleDelayedRepeatingTask(new StartKothTask($this), ($this->config->get("delay_between_koths")*72000), ($this->config->get("delay_between_koths")*72000));
+		new EventListener($this);
+
+		if (class_exists(Webhook::class)) $this->webhook = True;
+		if ($this->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
+			$this->getServer()->getPluginManager()->registerEvents(new ScoreHudListener($this), $this);
+			$this->scorehud = True;
+		}
+
+		$this->getScheduler()->scheduleDelayedRepeatingTask(new StartKothTask($this), ($this->config->get("delay_between_koths")*72000), ($this->config->get("delay_between_koths")*72000));
     }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
@@ -98,16 +96,14 @@ class Main extends PluginBase {
         }
     }
 
-    //API SECTION
-
     public function StartKoth() {
         if (isset($this->taskid)) {
             $this->getLogger()->info("§cCould not start KOTH event because another one is already running.");
         } else {
-            $this->taskid = $this->getScheduler()->scheduleRepeatingTask(new KothTask($this), 10)->getTaskId();
+            $this->taskid = $this->getScheduler()->scheduleRepeatingTask(new KothTask($this), 20)->getTaskId();
             $this->getServer()->broadcastMessage($this->config->get("koth_start_message"));
         }
-        if(isset($this->config->getAll()["start-webhook-url"])) {
+        if(isset($this->configAll["start-webhook-url"]) AND isset($this->webhook)) {
         	$webHook = new Webhook($this->config->get("start-webhook-url"));
 			$msg = new Message();
 			$embed = new Embed();
@@ -146,8 +142,8 @@ class Main extends PluginBase {
         unset($this->taskid);
         $this->getScheduler()->cancelAllTasks();
         $this->getServer()->broadcastMessage(str_replace("{PLAYER}", $winner, $this->config->get("koth_end_message")));
-        $this->bar->removeAllPlayers();
-		if(isset($this->config->getAll()["end-webhook-url"])) {
+		if ($this->config->get("bossbar")) $this->bar->removeAllPlayers();
+		if(isset($this->configAll["end-webhook-url"]) AND isset($this->webhook)) {
 			$webHook = new Webhook($this->config->get("end-webhook-url"));
 			$msg = new Message();
 			$embed = new Embed();

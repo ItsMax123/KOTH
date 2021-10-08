@@ -1,2 +1,4 @@
-position1: "0:0:0"
+---
+position1: "0:256:0"
 position2: "0:256:0"
+...

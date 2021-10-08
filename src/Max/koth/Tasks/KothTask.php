@@ -5,6 +5,9 @@ namespace Max\koth\Tasks;
 use pocketmine\scheduler\Task;
 use pocketmine\Server;
 
+use Ifera\ScoreHud\event\ServerTagsUpdateEvent;
+use Ifera\ScoreHud\scoreboard\ScoreTag;
+
 class KothTask extends Task {
 
     public $players_in_zone_old = [];
@@ -14,8 +17,8 @@ class KothTask extends Task {
     }
 
     public function onRun(int $currentTick) {
-        $pos1 = explode(":", $this->plugin->config->get("position1"));
-        $pos2 = explode(":", $this->plugin->config->get("position2"));
+        $pos1 = explode(":", $this->plugin->data->get("position1"));
+        $pos2 = explode(":", $this->plugin->data->get("position2"));
         $minX = min($pos1[0], $pos2[0]);
         $maxX = max($pos1[0], $pos2[0]);
         $minY = min($pos1[1], $pos2[1]);
@@ -30,7 +33,7 @@ class KothTask extends Task {
             if(($minX <= $player->getX() && $player->getX() <= $maxX && $minY <= $player->getY() && $player->getY() <= $maxY && $minZ <= $player->getZ() && $player->getZ() <= $maxZ)){
                 $players_in_zone[$player->getName()] = $time - 1;
             }
-            $this->plugin->bar->addPlayer($player);
+			if ($this->plugin->config->get("bossbar")) $this->plugin->bar->addPlayer($player);
         }
 
         foreach ($players_in_zone as $playerName => $playerTime) {
@@ -51,11 +54,19 @@ class KothTask extends Task {
 
         $total_capture_time = $this->plugin->config->get("capture_time");
         $current_capture_time = $time - $kingTime;
-        $this->plugin->bar->setTitle("§cKing Of The Hill §7(§bKOTH§7)");
         $minutes = floor(($total_capture_time - $current_capture_time)/60);
         $seconds = sprintf("%02d", (($total_capture_time - $current_capture_time) - ($minutes * 60)));
-        $this->plugin->bar->setSubTitle("§m".$minutes.":".$seconds."  |  "."King: ".$kingName);
-        $this->plugin->bar->setPercentage(round(($current_capture_time/$total_capture_time), 2) + 0.01);
+		if ($this->plugin->config->get("bossbar")) {
+			$this->plugin->bar->setTitle("§cKing Of The Hill §7(§bKOTH§7)");
+			$this->plugin->bar->setSubTitle("§m" . $minutes . ":" . $seconds . "  |  " . "King: " . $kingName);
+			$this->plugin->bar->setPercentage(round(($current_capture_time / $total_capture_time), 2) + 0.01);
+		}
+		if (isset($this->plugin->scorehud)) {
+			(new ServerTagsUpdateEvent([
+				new ScoreTag("koth.king", $kingName),
+				new ScoreTag("koth.time", $minutes . ":" . $seconds)
+			]))->call();
+		}
 
         if ($time - $kingTime >= $total_capture_time) {
             $this->plugin->StopKoth($kingName);

@@ -5,6 +5,7 @@ author: ItsMax123
 main: Max\koth\Main
 version: 1.0.0
 api: 3.0.0
+softdepend: ScoreHud
 
 commands:
   koth:

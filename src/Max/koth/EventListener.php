@@ -12,8 +12,6 @@ class EventListener implements Listener {
     }
 
     public function onJoin(PlayerJoinEvent $event) {
-        $this->plugin->bar->removePlayer($event->getPlayer());
+		if ($this->plugin->config->get("bossbar")) $this->plugin->bar->removePlayer($event->getPlayer());
     }
-
-
 }

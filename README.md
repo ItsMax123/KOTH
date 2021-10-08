@@ -1,7 +1,8 @@
-<img src="https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png" width="120" height="120" align="left">
+<img src="https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png" width="120" height="120">
+<hr>
 
 # KOTH
-KOTH is an event popular on HCF and Faction servers. This plugin lets you intergrate this to you server.
+KOTH is an event popular on HCF and Faction servers. This plugin lets you add this minigame to you server.
 
 # Support
 * For questions, please join the [discord server](https://discord.gg/YJZNhwhyMQ)
@@ -10,11 +11,12 @@ KOTH is an event popular on HCF and Faction servers. This plugin lets you interg
 # Features
 - Features:
   - [x] Custom KOTH zone (/koth setpos1, /koth setpos2)
-  - [x] BossBar Info
+  - [x] Manual start and stop (/koth start, /koth stop)
+  - [x] BossBar
   - [x] Discord Webhooks
+  - [x] ScoreHud support (koth.king & koth.time)
   - [x] Customizable automatic starting
   - [x] Customizable capture time
   - [x] Customizable rewards
-  - [x] Manual start and stop (/koth start, /koth stop)
 - Coming soon...
   - [ ] Support for multiple KOTH arenas at the same time
