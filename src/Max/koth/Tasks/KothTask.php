@@ -12,13 +12,15 @@ class KothTask extends Task {
 
     public $players_in_zone_old = [];
 
-    public function __construct($pl) {
+    public function __construct($pl, $arenaName) {
         $this->plugin = $pl;
+        $this->arenaName = $arenaName;
     }
 
     public function onRun(int $currentTick) {
-        $pos1 = explode(":", $this->plugin->data->get("position1"));
-        $pos2 = explode(":", $this->plugin->data->get("position2"));
+    	$arenaData = $this->plugin->data->get($this->arenaName);
+        $pos1 = explode(":", $arenaData["position1"]);
+        $pos2 = explode(":", $arenaData["position2"]);
         $minX = min($pos1[0], $pos2[0]);
         $maxX = max($pos1[0], $pos2[0]);
         $minY = min($pos1[1], $pos2[1]);
@@ -57,17 +59,18 @@ class KothTask extends Task {
         $minutes = floor(($total_capture_time - $current_capture_time)/60);
         $seconds = sprintf("%02d", (($total_capture_time - $current_capture_time) - ($minutes * 60)));
 		if ($this->plugin->config->get("bossbar")) {
-			$this->plugin->bar->setTitle("§cKing Of The Hill §7(§bKOTH§7)");
-			$this->plugin->bar->setSubTitle("§m" . $minutes . ":" . $seconds . "  |  " . "King: " . $kingName);
+			$this->plugin->bar->setTitle("§bKOTH: §c".$this->arenaName);
+			$this->plugin->bar->setSubTitle("§r§m" . $minutes . ":" . $seconds . "  |  " . "King: " . $kingName);
 			$this->plugin->bar->setPercentage(round(($current_capture_time / $total_capture_time), 2) + 0.01);
 		}
 		if ($this->plugin->config->get("hotbar")) {
 			foreach (Server::getInstance()->getOnlinePlayers() as $player) {
-				$player->sendTip("§mTime: ".$minutes.":".$seconds." | King: ".$kingName);
+				$player->sendTip("§bKOTH: §c".$this->arenaName."\n§r§mTime: ".$minutes.":".$seconds." | King: ".$kingName);
 			}
 		}
 		if (isset($this->plugin->scorehud)) {
 			(new ServerTagsUpdateEvent([
+				new ScoreTag("koth.name", $this->arenaName),
 				new ScoreTag("koth.king", $kingName),
 				new ScoreTag("koth.time", $minutes . ":" . $seconds)
 			]))->call();
