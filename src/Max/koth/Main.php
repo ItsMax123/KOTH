@@ -211,11 +211,11 @@ class Main extends PluginBase{
 			if(isset($this->configAll["start-webhook-image-url"])) $embed->setImage($this->config->get("start-webhook-image-url"));
 			if(isset($this->configAll["start-webhook-footer"])) $embed->setFooter($this->config->get("start-webhook-footer"), $this->config->get("start-webhook-footer-icon-url"));
 
-			if(isset($this->configAll["start-webhook-title"])) $embed->setTitle(str_replace("{ARENA_NAME}", $arenaName, $this->config->get("start-webhook-title")));
-			if(isset($this->configAll["start-webhook-description"])) $embed->setDescription(str_replace("{ARENA_NAME}", $arenaName, $this->config->get("start-webhook-description")));
+			if(isset($this->configAll["start-webhook-title"])) $embed->setTitle(str_replace(array("{ARENA_NAME}", "{COORDS}"), array($arenaName, $this->data->get($arenaName)["coords"]), $this->config->get("start-webhook-title")));
+			if(isset($this->configAll["start-webhook-description"])) $embed->setDescription(str_replace(array("{ARENA_NAME}", "{COORDS}"), array($arenaName, $this->data->get($arenaName)["coords"]), $this->config->get("start-webhook-description")));
 			if(isset($this->configAll["start-webhook-fields"])) {
 				foreach($this->config->get("start-webhook-fields") as $name => $value) {
-					$embed->addField(str_replace("{ARENA_NAME}", $arenaName, $name), str_replace("{ARENA_NAME}", $arenaName, $value));
+					$embed->addField(str_replace(array("{ARENA_NAME}", "{COORDS}"), array($arenaName, $this->data->get($arenaName)["coords"]), $name), str_replace(array("{ARENA_NAME}", "{COORDS}"), array($arenaName, $this->data->get($arenaName)["coords"]), $value));
 				}
 			}
 
@@ -244,19 +244,18 @@ class Main extends PluginBase{
 			if(isset($this->configAll["end-webhook-username"])) $msg->setUsername($this->config->get("end-webhook-username"));
 			if(isset($this->configAll["end-webhook-avatar-url"])) $msg->setAvatarURL($this->config->get("end-webhook-avatar-url"));
 			if(isset($this->configAll["end-webhook-mention"])) $msg->setContent($this->config->get("end-webhook-mention")); //<@& Role_ID >
-
 			$embed->setColor(0xFF0000);
-			if(isset($this->configAll["end-webhook-title"])) $embed->setTitle($this->config->get("end-webhook-title"));
-			if(isset($this->configAll["end-webhook-description"])) $embed->setDescription($this->config->get("end-webhook-description"));
-
-			if(isset($this->configAll["end-webhook-fields"])) {
-				foreach($this->config->get("end-webhook-fields") as $name => $value) {
-					$embed->addField($name, str_replace("{PLAYER}", $winner, $value));
-				}
-			}
-			if(isset($this->configAll["end-webhook-footer-icon-url"])) $embed->setFooter($this->config->get("end-webhook-footer"), $this->config->get("end-webhook-footer-icon-url"));
 			if(isset($this->configAll["end-webhook-thumnail-url"])) $embed->setThumbnail($this->config->get("end-webhook-thumnail-url"));
 			if(isset($this->configAll["end-webhook-image-url"])) $embed->setImage($this->config->get("end-webhook-image-url"));
+			if(isset($this->configAll["end-webhook-footer"])) $embed->setFooter($this->config->get("end-webhook-footer"), $this->config->get("end-webhook-footer-icon-url"));
+
+			if(isset($this->configAll["end-webhook-title"])) $embed->setTitle(str_replace("{PLAYER}", $winner, $this->config->get("end-webhook-title")));
+			if(isset($this->configAll["end-webhook-description"])) $embed->setDescription(str_replace("{PLAYER}", $winner, $this->config->get("end-webhook-description")));
+			if(isset($this->configAll["end-webhook-fields"])) {
+				foreach($this->config->get("end-webhook-fields") as $name => $value) {
+					$embed->addField(str_replace("{PLAYER}", $winner, $name), str_replace("{PLAYER}", $winner, $value));
+				}
+			}
 
 			$msg->addEmbed($embed);
 			$webHook->send($msg);
