@@ -16,8 +16,8 @@ reward_commands:
   - "give {PLAYER} diamond 64"
   - "give {PLAYER} obsidian 64"
 
-#The message that will be broadcasted when a KOTH event starts:
-koth_start_message: "§7[§bKOTH§7] §a§lKOTH event has started!"
+#The message that will be broadcasted when a KOTH event starts, {ARENA_NAME} will be replaced with the name of the arena:
+koth_start_message: "§7[§bKOTH§7] §a§l{ARENA_NAME} KOTH has started!"
 
 #The messgae that will be broadcasted when a KOTH event ends, {PLAYER} will be replaced with the name of the winner:
 koth_end_message: "§7[§bKOTH§7] §a§lKOTH event has ended and {PLAYER} has won!"
