@@ -11,7 +11,7 @@ commands:
   koth:
     description: Base command for all koth related commands.
     usage: "/koth"
-    permission: koth.command
+    permission: maxkoth.command
 
 permissions:
   maxkoth.command:
