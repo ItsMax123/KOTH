@@ -10,8 +10,11 @@ use Ifera\ScoreHud\scoreboard\ScoreTag;
 
 class KothTask extends Task {
 
-    public $time_in_arena = [];
-    public $king_time = [];
+    public $arena_enter_time = [];
+    public $king_time = [
+    	"name" => "",
+		"time" => 0
+	];
 
     public function __construct($pl, $arenaName) {
         $this->plugin = $pl;
@@ -30,27 +33,38 @@ class KothTask extends Task {
         $maxZ = max($pos1[2], $pos2[2]);
 
 		$time = time();
+		$arena_enter_time = [];
 
 		foreach (Server::getInstance()->getOnlinePlayers() as $player) {
 		    if(($minX <= $player->getX() && $player->getX() <= $maxX && $minY <= $player->getY() && $player->getY() <= $maxY && $minZ <= $player->getZ() && $player->getZ() <= $maxZ)){
-				if (!isset($this->time_in_arena[$player->getName()])) {
-					$this->time_in_arena[$player->getName()] = $time - 1;
+				if (isset($this->arena_enter_time[$player->getName()])) {
+					$arena_enter_time[$player->getName()] = $this->arena_enter_time[$player->getName()]; #If player was already in the arena, keep their time as the original.
+				} else {
+					$this->arena_enter_time[$player->getName()] = $time - 1; #If the player is entering the arena, set their time.
+					$arena_enter_time[$player->getName()] = $time - 1;
 				}
 		    } else {
-				unset($this->time_in_arena[$player->getName()]);
+				unset($this->arena_enter_time[$player->getName()]); #If player is outside the arena, unset their time.
 				unset($this->king_time[$player->getName()]);
 			}
 			if ($this->plugin->config->get("bossbar")) $this->plugin->bar->addPlayer($player);
 		}
 
-		if (empty($this->time_in_arena)) {
-			$kingName = "";
-			$kingTime = $time;
+		$this->arena_enter_time = $arena_enter_time;
+
+		if (empty($this->arena_enter_time)) {
+			$this->king_time["name"] = "";
+			$this->king_time["time"] = $time;
 		} else {
-			$kingName = array_keys($this->time_in_arena, min($this->time_in_arena))[0];
-			if (!isset($this->king_time[$kingName])) $this->king_time[$kingName] = $time - 1;
-			$kingTime = $this->king_time[$kingName];
+			$kingName = array_keys($this->arena_enter_time, min($this->arena_enter_time))[0];
+			if ($this->king_time["name"] !== $kingName) {
+				$this->king_time["name"] = $kingName;
+				$this->king_time["time"] = $time - 1;
+			}
     	}
+
+		$kingName = $this->king_time["name"];
+		$kingTime = $this->king_time["time"];
 
         $total_capture_time = $this->plugin->config->get("capture_time");
         $current_capture_time = $time - $kingTime;
