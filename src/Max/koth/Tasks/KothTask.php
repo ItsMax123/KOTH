@@ -10,7 +10,8 @@ use Ifera\ScoreHud\scoreboard\ScoreTag;
 
 class KothTask extends Task {
 
-    public $players_in_zone_old = [];
+    public $time_in_arena = [];
+    public $king_time = [];
 
     public function __construct($pl, $arenaName) {
         $this->plugin = $pl;
@@ -28,31 +29,28 @@ class KothTask extends Task {
         $minZ = min($pos1[2], $pos2[2]);
         $maxZ = max($pos1[2], $pos2[2]);
 
-        $players_in_zone = [];
-        $time = time();
+		$time = time();
 
-        foreach (Server::getInstance()->getOnlinePlayers() as $player) {
-            if(($minX <= $player->getX() && $player->getX() <= $maxX && $minY <= $player->getY() && $player->getY() <= $maxY && $minZ <= $player->getZ() && $player->getZ() <= $maxZ)){
-                $players_in_zone[$player->getName()] = $time - 1;
-            }
+		foreach (Server::getInstance()->getOnlinePlayers() as $player) {
+		    if(($minX <= $player->getX() && $player->getX() <= $maxX && $minY <= $player->getY() && $player->getY() <= $maxY && $minZ <= $player->getZ() && $player->getZ() <= $maxZ)){
+				if (!isset($this->time_in_arena[$player->getName()])) {
+					$this->time_in_arena[$player->getName()] = $time - 1;
+				}
+		    } else {
+				unset($this->time_in_arena[$player->getName()]);
+				unset($this->king_time[$player->getName()]);
+			}
 			if ($this->plugin->config->get("bossbar")) $this->plugin->bar->addPlayer($player);
-        }
+		}
 
-        foreach ($players_in_zone as $playerName => $playerTime) {
-            if (isset($this->players_in_zone_old[$playerName])) {
-                $players_in_zone[$playerName] = $this->players_in_zone_old[$playerName];
-            }
-        }
-
-        $this->players_in_zone_old = $players_in_zone;
-
-        if (!empty($players_in_zone)) {
-            $kingTime = min($players_in_zone);
-            $kingName = array_keys($players_in_zone, $kingTime)[0];
-        } else {
-            $kingName = "";
-            $kingTime = $time;
-        }
+		if (empty($this->time_in_arena)) {
+			$kingName = "";
+			$kingTime = $time;
+		} else {
+			$kingName = array_keys($this->time_in_arena, min($this->time_in_arena))[0];
+			if (!isset($this->king_time[$kingName])) $this->king_time[$kingName] = $time - 1;
+			$kingTime = $this->king_time[$kingName];
+    	}
 
         $total_capture_time = $this->plugin->config->get("capture_time");
         $current_capture_time = $time - $kingTime;
@@ -76,7 +74,7 @@ class KothTask extends Task {
 			]))->call();
 		}
 
-        if ($time - $kingTime >= $total_capture_time) {
+        if ($current_capture_time >= $total_capture_time) {
             $this->plugin->StopKoth($kingName);
         }
     }
