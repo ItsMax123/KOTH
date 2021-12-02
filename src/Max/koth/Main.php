@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Max\koth;
 
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\utils\{Config};
 use pocketmine\plugin\PluginBase;
@@ -15,7 +16,6 @@ use Max\koth\libs\BossBar;
 use CortexPE\DiscordWebhookAPI\Message;
 use CortexPE\DiscordWebhookAPI\Webhook;
 use CortexPE\DiscordWebhookAPI\Embed;
-use Ifera\ScoreHud\event\TagsResolveEvent;
 
 class Main extends PluginBase{
     public $taskid, $bar;
@@ -28,12 +28,12 @@ class Main extends PluginBase{
 		$this->data = new Config($this->getDataFolder() . "data.yml", Config::YAML);
         $this->configAll = $this->config->getAll();
 		if ($this->config->get("bossbar")) $this->bar = new BossBar();
-	    
+
 		new EventListener($this);
 
 		if (class_exists(Webhook::class)) $this->webhook = True;
 		if ($this->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
-			$this->getServer()->getPluginManager()->registerEvents(new ScoreHudListener($this), $this);
+			$this->getServer()->getPluginManager()->registerEvents(new ScoreHudListener(), $this);
 			$this->scorehud = True;
 		}
 
@@ -43,7 +43,7 @@ class Main extends PluginBase{
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
         if ($command->getName() == "koth") {
             if (!isset($args[0])) {
-                $sender->sendMessage("§7[§bKOTH§7] §aAvailable commands:§r\n - /koth create [arena name]\n - /koth delete [arena name]\n - /koth setpos1 [arena name]\n - /koth setpos2 [arena name]\n - /koth list\n - /koth start [Optional: arena name]\n - /koth stop");
+                $sender->sendMessage("§7[§bKOTH§7] §aAvailable commands:§r\n - /koth create [arena name]\n - /koth delete [arena name]\n - /koth setpos1 [arena name]\n - /koth setpos2 [arena name]\n - /koth setspawn [arena name]\n - /koth list\n - /koth start [Optional: arena name]\n - /koth join\n - /koth stop");
                 return true;
             }
             switch($args[0]){
@@ -147,6 +147,48 @@ class Main extends PluginBase{
 					$this->data->save();
 					$this->data->reload();
                     return true;
+				case "setteleport":
+				case "settp":
+				case "setspawn":
+				case "setjoin":
+					if (!$sender instanceof Player) {
+						$this->getLogger()->info("§cYou can only use this command in-game.");
+						return true;
+					}
+					if (isset($args[1])) {
+						if (!$this->data->get($args[1])) {
+							$sender->sendMessage("§7[§bKOTH§7] §cThe KOTH you are trying to set the join position for does not exist.");
+							return true;
+						}
+						$position = $sender->getPosition();
+						$arenaData = $this->data->get($args[1]);
+						$arenaData["spawn"] = $position->x.":".$position->y.":".$position->z;
+						$this->data->set($args[1], $arenaData);
+						$this->data->save();
+						$this->data->reload();
+						$sender->sendMessage("§7[§bKOTH§7] §aJoin position set.");
+					} else {
+						$sender->sendMessage("§7[§bKOTH§7] §cYou need to specify the name of the koth arena you want to set the join position for.");
+					}
+					return true;
+				case "join":
+				case "spawn":
+				case "tp":
+					if (!$sender instanceof Player) {
+						$this->getLogger()->info("§cYou can only use this command in-game.");
+						return true;
+					}
+					if (isset($this->currentKOTH)) {
+						$arenaData = $this->data->get($this->currentKOTH);
+						if (!is_null($arenaData["spawn"])) {
+							$spawn = explode(":", $arenaData["spawn"]);
+							$sender->teleport(new Vector3((float)($spawn[0]), (float)($spawn[1]), (float)($spawn[2])));
+							$sender->sendMessage("§7[§bKOTH§7] §aTeleported to the KOTH arena.");
+						} else {
+							$sender->sendMessage("§7[§bKOTH§7] §cCannot teleport to the arena.");
+						}
+					}
+					return true;
 				case "list":
 					if (empty($this->data->getAll())) {
 						$sender->sendMessage("§7[§bKOTH§7] §cThere are currently no KOTH arenas.");
@@ -167,11 +209,13 @@ class Main extends PluginBase{
     }
 
     public function newArena(string $arenaName) {
+		$safeSpawn = $this->getServer()->getDefaultLevel()->getSafeSpawn();
     	$this->data->set(
     		$arenaName,
 			array (
 				'position1' => '0:256:0',
 				'position2' => '0:256:0',
+				'spawn' => null,
 				'coords' => 'N/A'
 			)
 		);
@@ -196,6 +240,7 @@ class Main extends PluginBase{
             return;
         }
 		if (!isset($arenaName)) $arenaName = array_rand($this->data->getAll());
+		$this->currentKOTH = $arenaName;
         $this->taskid = $this->getScheduler()->scheduleRepeatingTask(new KothTask($this, $arenaName), 20)->getTaskId();
         $this->getServer()->broadcastMessage(str_replace("{ARENA_NAME}", $arenaName, $this->config->get("koth_start_message")));
         if(isset($this->configAll["start-webhook-url"]) AND isset($this->webhook)) {
@@ -225,6 +270,7 @@ class Main extends PluginBase{
     }
 
     public function StopKoth(string $winner = null) {
+    	unset($this->currentKOTH);
         if ($winner == null) {
             $winner = "no one";
         } else {
