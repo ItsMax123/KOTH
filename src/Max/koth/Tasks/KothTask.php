@@ -23,6 +23,7 @@ class KothTask extends Task {
 
     public function onRun(int $currentTick) {
     	$arenaData = $this->plugin->data->get($this->arenaName);
+    	$world = $arenaData["world"];
         $pos1 = explode(":", $arenaData["position1"]);
         $pos2 = explode(":", $arenaData["position2"]);
         $minX = min($pos1[0], $pos2[0]);
@@ -36,16 +37,18 @@ class KothTask extends Task {
 		$arena_enter_time = [];
 
 		foreach (Server::getInstance()->getOnlinePlayers() as $player) {
-		    if(($minX <= $player->getX() && $player->getX() <= $maxX && $minY <= $player->getY() && $player->getY() <= $maxY && $minZ <= $player->getZ() && $player->getZ() <= $maxZ)){
-				if (isset($this->arena_enter_time[$player->getName()])) {
-					$arena_enter_time[$player->getName()] = $this->arena_enter_time[$player->getName()]; #If player was already in the arena, keep their time as the original.
+			if ($player->getLevel()->getFolderName() == $world) {
+				if (($minX <= $player->getX() && $player->getX() <= $maxX && $minY <= $player->getY() && $player->getY() <= $maxY && $minZ <= $player->getZ() && $player->getZ() <= $maxZ)) {
+					if (isset($this->arena_enter_time[$player->getName()])) {
+						$arena_enter_time[$player->getName()] = $this->arena_enter_time[$player->getName()]; #If player was already in the arena, keep their time as the original.
+					} else {
+						$this->arena_enter_time[$player->getName()] = $time - 1; #If the player is entering the arena, set their time.
+						$arena_enter_time[$player->getName()] = $time - 1;
+					}
 				} else {
-					$this->arena_enter_time[$player->getName()] = $time - 1; #If the player is entering the arena, set their time.
-					$arena_enter_time[$player->getName()] = $time - 1;
+					unset($this->arena_enter_time[$player->getName()]); #If player is outside the arena, unset their time.
+					unset($this->king_time[$player->getName()]);
 				}
-		    } else {
-				unset($this->arena_enter_time[$player->getName()]); #If player is outside the arena, unset their time.
-				unset($this->king_time[$player->getName()]);
 			}
 			if ($this->plugin->config->get("bossbar")) $this->plugin->bar->addPlayer($player);
 		}

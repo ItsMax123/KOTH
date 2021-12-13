@@ -143,6 +143,7 @@ class Main extends PluginBase{
 					$Y = round((min($pos1[1], $pos2[1]) + max($pos1[1], $pos2[1]))/2);
 					$Z = round((min($pos1[2], $pos2[2]) + max($pos1[2], $pos2[2]))/2);
 					$arenaData["coords"] = $X.", ".$Y.", ".$Z;
+					$arenaData["world"] = $sender->getLevel()->getFolderName();
 					$this->data->set($args[1], $arenaData);
 					$this->data->save();
 					$this->data->reload();
@@ -209,7 +210,6 @@ class Main extends PluginBase{
     }
 
     public function newArena(string $arenaName) {
-		$safeSpawn = $this->getServer()->getDefaultLevel()->getSafeSpawn();
     	$this->data->set(
     		$arenaName,
 			array (
