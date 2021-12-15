@@ -183,7 +183,7 @@ class Main extends PluginBase{
 						$arenaData = $this->data->get($this->currentKOTH);
 						if (!is_null($arenaData["spawn"])) {
 							$spawn = explode(":", $arenaData["spawn"]);
-							$sender->teleport(new Vector3((float)($spawn[0]), (float)($spawn[1]), (float)($spawn[2])));
+							$sender->teleport(new Position((float)($spawn[0]), (float)($spawn[1]), (float)($spawn[2]), $this->getServer()->getLevelByName($arenaData["world"])));
 							$sender->sendMessage("§7[§bKOTH§7] §aTeleported to the KOTH arena.");
 						} else {
 							$sender->sendMessage("§7[§bKOTH§7] §cCannot teleport to the arena.");
