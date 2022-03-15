@@ -1,19 +1,43 @@
 name: KOTH
-description: "A King of the hill (KOTH) minigame"
+description: "Implements a King of the hill (KOTH) event to your server"
 author: ItsMax123
 
-main: Max\koth\Main
-version: 1.0.0
-api: 3.0.0
+main: Max\koth\KOTH
+version: 2.0.0
+api: 4.0.0
 softdepend: ScoreHud
 
-commands:
-  koth:
-    description: Base command for all koth related commands.
-    usage: "/koth"
-    permission: maxkoth.command
-
 permissions:
-  maxkoth.command:
+  maxkoth.command.koth.use:
+    description: Lets user use all koth commands.
+    default: true
+  maxkoth.command.koth.join:
+    description: Lets user use all koth commands.
+    default: true
+  maxkoth.command.koth.create:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.delete:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.list:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.pos1:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.pos2:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.remove:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.setspawn:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.start:
+    description: Lets user use all koth commands.
+    default: op
+  maxkoth.command.koth.stop:
     description: Lets user use all koth commands.
     default: op
