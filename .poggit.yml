@@ -13,6 +13,8 @@ projects:
         version: 2.1.1
       - src: thebigsmilexd/apibossbar/apibossbar
         version: 0.1.5
+      - src: muqsit\simplepackethandler/simplepackethandler
+        version: 0.1.0
     lint:
       phpstan: false
 ...
