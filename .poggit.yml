@@ -9,10 +9,13 @@ projects:
     libs:
       - src: CortexPE/DiscordWebhookAPI/DiscordWebhookAPI
         version: ^1.0.2
+        branch: PM4
       - src: CortexPE/Commando/Commando
         version: 2.1.1
+        branch: PM4
       - src: thebigsmilexd/apibossbar/apibossbar
         version: 0.1.5
+        branch: PM4
       - src: Muqsit/SimplePacketHandler/SimplePacketHandler
         version: 0.1.0
     lint:
