@@ -10,7 +10,7 @@ projects:
       - src: CortexPE/DiscordWebhookAPI/DiscordWebhookAPI
         version: ^1.0.1
       - src: CortexPE/Commando/Commando
-        version: 3.0.0
+        version: ^3.0.0
       - src: thebigsmilexd/apibossbar/apibossbar
         version: 0.1.5
     lint:
