@@ -2,15 +2,20 @@
 
 namespace Max\koth\Tasks;
 
+use Max\koth\KOTH;
 use pocketmine\scheduler\Task;
 
 class StartKothTask extends Task {
 
-    public function __construct($pl) {
-        $this->plugin = $pl;
-    }
+	public KOTH $pl;
 
-    public function onRun(int $currentTick) {
-        $this->plugin->StartKoth();
-    }
+	public function __construct(KOTH $pl) {
+		$this->pl = $pl;
+	}
+
+	public function onRun() : void {
+		if (in_array((float)date("G.i"), $this->pl->START_TIMES)){
+			$this->pl->startKoth($this->pl->getArena());
+		}
+	}
 }

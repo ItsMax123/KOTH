@@ -1,67 +1,63 @@
 ---
-#Time (IN HOURS) between each KOTH event:
-delay_between_koths: 6
+#Ticks between each bossbar update:
+update_delay: 2
 
 #The time (IN SECONDS) to capture KOTH:
 capture_time: 300
 
-#Should the plugin display koth information on the bossbar(top of screen) (on/off):
+#Should the plugin display KOTH information on the bossbar (top of screen) (on/off):
 bossbar: on
 
-#Should the plugin display koth information on the hotbar(bottom of screen) (on/off):
-hotbar: off
+#Should the plugin display KOTH information above the hotbar (bottom of screen) (on/off):
+hotbar_popups: off
 
 #The commands that will be executed when the KOTH event has ended, {PLAYER} will be replaced with the name of the winner:
 reward_commands:
   - "give {PLAYER} diamond 64"
   - "give {PLAYER} obsidian 64"
 
-#The message that will be broadcasted when a KOTH event starts, {ARENA_NAME} will be replaced with the name of the arena:
-koth_start_message: "§7[§bKOTH§7] §a§l{ARENA_NAME} KOTH has started!"
+#Times when a KOTH event should automatically start (format: HOUR.MINUTE) (Leave blanc if you dont want to use this):
+start_times:
+  - 17.0 #For example, this will automatically start a KOTH event at 5PM
+
+#The message that will broadcast when a KOTH event starts, {ARENA_NAME} will be replaced with the name of the arena:
+start_message: "\n§7[§bKOTH§7] §a§l{ARENA_NAME} KOTH has started!\n"
 
 #The messgae that will be broadcasted when a KOTH event ends, {PLAYER} will be replaced with the name of the winner:
-koth_end_message: "§7[§bKOTH§7] §a§lKOTH event has ended and {PLAYER} has won!"
+end_message: "§7[§bKOTH§7] §a§lKOTH event has ended and {PLAYER} has won!"
 
-#Webhooks are a way to automatically send discord messages when koth start/ends.
-#Change whatever you want here. To remove something, just leave it blanc.
+
+#Webhooks are a way to automatically send discord messages when KOTH start/ends.
+#Change whatever you want here. To remove something, just leave it blank.
 #Everything that is already in here is just here as an example.
 
-#Webhook when koth starts ({ARENA_NAME} will be replaced with the name of the koth arena, {COORDS} will be replaced with the coords of the koth):
-start-webhook-url:
-start-webhook-username: "KOTH-Announcer"
-start-webhook-avatar-url: https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png
-#To mention a role, do <@&ROLE_ID>, to mention a person do <@USER_ID>
-start-webhook-mention: "@everyone"
-#Color must be in HEX format with no #
-start-webhook-color: "00FF00"
-start-webhook-title: "KOTH"
-start-webhook-description: "A new {ARENA_NAME} KOTH has **started**!"
-#You can change 'Coordinates' and 'Rewards' to whatever you want. You can also remove them or add more fields.
-start-webhook-fields:
-  Coordinates: "{COORDS}"
-  Rewards: "64 diamonds, 64 obsidian"
-start-webhook-thumnail-url: https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg
-start-webhook-image-url: https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg
-start-webhook-footer: "King Of The Hill (KOTH)"
-start-webhook-footer-icon-url: https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png
+webhook_link:
 
+start_webhook:
+  username: "KOTH-Announcer"
+  avatar-url: "https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png"
+  mention: "@everyone" #To mention a role, do <@&ROLE_ID>, to mention a person do <@USER_ID>
+  title: "KOTH"
+  description: "A new {ARENA_NAME} KOTH has **started**!"
+  fields: #You can change 'Go to' and 'Rewards' to whatever you want. You can also change them, remove them or add more fields.
+    Go to: "{COORDS}"
+    Rewards: "64 diamonds, 64 obsidian"
+  thumnail-url: "https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg"
+  image-url: "https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg"
+  footer: "King Of The Hill (KOTH)"
+  footer-icon-url: "https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png"
 
-#Webhook when koth ends ({PLAYER} will be replaced with the winner of the koth event):
-end-webhook-url:
-end-webhook-username: "KOTH-Announcer"
-end-webhook-avatar-url: https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png
-#To mention a role, do <@&ROLE_ID>, to mention a person do <@USER_ID>
-end-webhook-mention:
-#Color must be in HEX format with no #
-end-webhook-color: "FF0000"
-end-webhook-title: "KOTH"
-end-webhook-description: "The KOTH event has **ended**!"
-#You can change 'Coordinates' and 'Rewards' to whatever you want. You can also remove them or add more fields.
-end-webhook-fields: 
-  Winner: "{PLAYER}"
-  Rewards: "64 diamonds, 64 obsidian"
-end-webhook-thumnail-url: https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg
-end-webhook-image-url: https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg
-end-webhook-footer: "King Of The Hill (KOTH)"
-end-webhook-footer-icon-url: https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png
+end_webhook:
+  username: "KOTH-Announcer"
+  avatar-url: "https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png"
+  mention:  #To mention a role, do <@&ROLE_ID>, to mention a person do <@USER_ID>
+  title: "KOTH"
+  description: "The KOTH event has **ended**!"
+  fields: #You can change 'Winner' and 'Rewards' to whatever you want. You can also change them, remove them or add more fields.
+    Winner: "{PLAYER}"
+    Rewards: "64 diamonds, 64 obsidian"
+  thumnail-url: "https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg"
+  image-url: "https://static.comicvine.com/uploads/original/11136/111367279/6985185-king%20of%20the%20hill.jpg"
+  footer: "King Of The Hill (KOTH)"
+  footer-icon-url: "https://www.giantbomb.com/a/uploads/original/8/87790/3092558-h1_koth.png"
 ...
