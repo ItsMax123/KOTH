@@ -8,7 +8,7 @@ projects:
     icon: "koth.png"
     libs:
       - src: CortexPE/DiscordWebhookAPI/DiscordWebhookAPI
-        version: 1.0.1
+        version: ^1.0.2
       - src: CortexPE/Commando/Commando
         version: 2.1.1
       - src: thebigsmilexd/apibossbar/apibossbar
